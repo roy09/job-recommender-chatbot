@@ -1,6 +1,8 @@
 from flask import Flask, make_response, request, jsonify
 import pandas as pd
 
+from recommendationEngine import recommendationApp
+
 app = Flask(__name__)
 
 df_data = pd.read_csv('seek_australia.csv')
@@ -15,6 +17,7 @@ def results():
         job_title = 'Business Analyst'
         location = 'Sydney'
         job_type = 'Full time'
+        recommendationApp.give_suggestions("string goes here")
         job_result = ''
 
         result = {} # an empty dictionary
@@ -41,4 +44,4 @@ def index():
 
 # call the main function to run the flask app
 if __name__ == '__main__':
-   app.run(debug=True)
+    app.run(debug=True)
