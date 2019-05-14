@@ -12,18 +12,30 @@ def results():
     req = request.get_json(force=True)
     action = req.get('queryResult').get('action')
 
+    '''
+    "action": "input.skills",
+    "parameters": {
+      "UserName": "Aaquib Ladiwala",
+      "UserDegree": "Masters in IT",
+      "UserSkill1": "Programming Java",
+      "UserSkill2": "Python AEM"
+    },
+    '''
     if action == "input.skills":
         params = req.get('queryResult').get('parameters')
-        job_title = 'Business Analyst'
-        location = 'Sydney'
-        job_type = 'Full time'
-        recommendationApp.give_suggestions("string goes here")
-        job_result = ''
+        keywords = params.get('UserDegree') + ' ' + params.get('UserSkill1') + ' ' + params.get('UserSkill2')
+
+        top5JobsTitle = recommendationApp.give_suggestions(keywords)
+        job_result = 
 
         result = {} # an empty dictionary
 
         # fulfillment text is the default response that is returned to the dialogflow request
-        result["fulfillmentText"] = 'We found ' + ' 5 ' + ' jobs. Here are the details'
+        result["fulfillmentText"] = 'Suggested job titles'
+
+        # display cards
+
+        
 
         # jsonify the result dictionary
         # this will make the response mime type to application/json

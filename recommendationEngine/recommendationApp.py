@@ -156,4 +156,4 @@ def give_suggestions(resume_text):
 
     # Print the top ten suggested jobs for the user's cluster
     result = cos_sim.sort_values('score', ascending=False)[:5]
-    return data.iloc[result.index]['Title']
+    return data.loc[result.index]['Title']
