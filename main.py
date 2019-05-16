@@ -1,18 +1,15 @@
 from flask import Flask, make_response, request, jsonify
-import pandas as pd
 
 # from services import JobRecommendationService
 # from services import JobRetrievalService
 
 app = Flask(__name__)
 
-df_data = pd.read_csv('data/seek_australia.csv')
-
 # definition of the results function
 def results():
     req = request.get_json(force=True)
     action = req.get('queryResult').get('action')
-
+    print('hey old fren')
     '''
     "action": "input.skills",
     "parameters": {
@@ -23,6 +20,7 @@ def results():
     },
     '''
     if action == "input.skills":
+        print('whoa')
         params = req.get('queryResult').get('parameters')
         keywords = params.get('UserDegree') + ' ' + params.get('UserSkill1') + ' ' + params.get('UserSkill2')
         print(keywords)
@@ -31,55 +29,19 @@ def results():
         top5JobsTitle = "Some Job Title";
         result = {} # an empty dictionary
 
-        # fulfillment text is the default response that is returned to the dialogflow request
-        result["messages"] = [
-    {
-      "attachment": {
-        "type": "image",
-        "payload": {
-          "url": "https://media.giphy.com/media/yourgif.gif"
+        payload = {
+          "facebook": {
+            "attachment": {
+              "type": "audio",
+              "payload": {
+                "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+              }
+            }
+          }
         }
-      }
-    },
-    {
-      "text": "Insert Random Text Here"
-    }
-  ]
-
-        # display cards
-        # payload = [
-        #   {
-        #     "card": {
-        #       "title": "Card Title",
-        #       "subtitle": "Card subtitle",
-        #       "imageUri": "https://github.com/fluidicon.png",
-        #       "buttons": [
-        #         {
-        #           "text": "Go to Google",
-        #           "postback": "www.google.com"
-        #         },
-        #         {
-        #           "text": "Go to Dialogflow",
-        #           "postback": "www.dialogflow.com"
-        #         },
-        #         {
-        #           "text": "Go to Slack",
-        #           "postback": "www.slack.com"
-        #         }
-        #       ]
-        #     },
-        #     "platform": "FACEBOOK"
-        #   },
-        #   {
-        #     "text": {
-        #       "text": [
-        #         ""
-        #       ]
-        #     }
-        #   }
-        # ]
+           
         
-        # result["fulfillmentText"] = payload
+        result["payload"] = payload
 
         # jsonify the result dictionary
         # this will make the response mime type to application/json
@@ -88,14 +50,11 @@ def results():
         # return the result json
         return make_response(result)
 
-def retreiveJobs(job_title='Business Analyst', job_type='Full Time', city='Sydney'):
-    searchResultDf = df[(df['city']=='Sydney') & (df['job_title']=="Business Analyst") & (df['job_type']=="Full Time")]
-
-
 # default route for the webhook
 # it accepts both the GET and POST methods
 @app.route('/webhook', methods=['GET', 'POST'])
 def index():
+    print('we are here')
     # calling the result function for response
     return results()
 
