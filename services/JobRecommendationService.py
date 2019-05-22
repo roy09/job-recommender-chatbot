@@ -145,7 +145,6 @@ def give_suggestions(resume_text):
 
     # Predict cluster for user and print cluster number
     cluster = lr.predict(user_comps)[0]
-    
 
     # Calculate cosine similarity
     cos_sim = pd.DataFrame(cosine_similarity(user_comps,comps[comps.index==cluster]))
@@ -156,5 +155,5 @@ def give_suggestions(resume_text):
     cos_sim.columns = ['score']
 
     # Print the top ten suggested jobs for the user's cluster
-    result = cos_sim.sort_values('score', ascending=False)[:5]
-    return data.loc[result.index]['Title']
+    suggestion_result = cos_sim.sort_values('score', ascending=False)[:3]
+    return  data.loc[suggestion_result.index]['Title'].tolist()

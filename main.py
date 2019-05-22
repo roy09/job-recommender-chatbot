@@ -1,3 +1,5 @@
+import re
+
 from flask import Flask, make_response, request, jsonify
 
 # from services import JobRecommendationService
@@ -9,7 +11,7 @@ app = Flask(__name__)
 def results():
     req = request.get_json(force=True)
     action = req.get('queryResult').get('action')
-    print('hey old fren')
+    
     '''
     "action": "input.skills",
     "parameters": {
@@ -20,33 +22,74 @@ def results():
     },
     '''
     if action == "input.skills":
-        print('whoa')
         params = req.get('queryResult').get('parameters')
-        keywords = params.get('UserDegree') + ' ' + params.get('UserSkill1') + ' ' + params.get('UserSkill2')
-        print(keywords)
-        # top5JobsTitle = JobRecommendationService.give_suggestions(keywords)
-        # job_result = 
-        top5JobsTitle = "Some Job Title";
+
+        print("PARAMS", params)
+
+        keywords = params.get('userSkill') + ',' + params.get('userDegree')
+        
+
+        # top5JobTitle = JobRecommendationService.give_suggestions(keywords)
+        top5JobTitle = ['CS Dev', 'Whatever Dev']
+
+        buttons = []
+        for job in top5JobTitle:
+            button = {
+            "type": "postback",
+            "title": job,
+            "payload": "Find Job " + job}
+            buttons.append(button)
+
         result = {} # an empty dictionary
 
         payload = {
           "facebook": {
             "attachment": {
-              "type": "audio",
+              "type": "template",
               "payload": {
-                "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+                "template_type": "button",
+                "text": "Here are possible job title suitable you, choose one.",
+                "buttons": buttons
               }
             }
           }
         }
-           
+                   
         
         result["payload"] = payload
 
         # jsonify the result dictionary
         # this will make the response mime type to application/json
+        print(result)
         result = jsonify(result)
+        print(result)
+        # return the result json
+        return make_response(result)
 
+    else if action == "input.skills":
+        params = req.get('queryResult').get('parameters')
+        print("PARAMS", params)
+
+
+        payload = {
+          "facebook": {
+            "attachment": {
+              "type": "template",
+              "payload": {
+                
+              }
+            }
+          }
+        }
+                   
+        
+        result["payload"] = payload
+
+        # jsonify the result dictionary
+        # this will make the response mime type to application/json
+        print(result)
+        result = jsonify(result)
+        print(result)
         # return the result json
         return make_response(result)
 
