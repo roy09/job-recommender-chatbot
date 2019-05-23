@@ -3,7 +3,7 @@ import re
 from flask import Flask, make_response, request, jsonify
 
 # from services import JobRecommendationService
-# from services import JobRetrievalService
+from services import JobRetrievalService
 
 app = Flask(__name__)
 
@@ -43,18 +43,18 @@ def results():
         result = {} # an empty dictionary
 
         payload = {
-          "facebook": {
-            "attachment": {
-              "type": "template",
-              "payload": {
-                "template_type": "button",
-                "text": "Here are possible job title suitable you, choose one.",
-                "buttons": buttons
-              }
-            }
-          }
+        "facebook": {
+        "attachment": {
+        "type": "template",
+        "payload": {
+        "template_type": "button",
+        "text": "Here are possible job title suitable you, choose one.",
+        "buttons": buttons
         }
-                   
+        }
+        }
+        }
+
         
         result["payload"] = payload
 
@@ -66,22 +66,72 @@ def results():
         # return the result json
         return make_response(result)
 
-    else if action == "input.skills":
+    elif action == "input.jobs":
         params = req.get('queryResult').get('parameters')
+        result = {}
         print("PARAMS", params)
+        jobs = JobRetrievalService.retreiveJobs()
+        # elements = []
+        # for job in jobs:
+        #   element = {
+        #   "title": "WHATEVER" + '|' + "SYDNEY",
+        #   "subtitle": 'Wipro' + '\n\n' + "24000",
+        #   "default_action": {
+        #   "type": "web_url",
+        #   "url": "https://seek.com.au",
+        #   "messenger_extensions": "false",
+        #   "webview_height_ratio": "tall"
+        #   }
+        #   }
+        #   elements.append(element)
 
-
+        # print(len(elements))
+        elements = [
+            {
+          "title": "WHATEVER" + '|' + "SYDNEY",
+          "subtitle": 'Wipro' + '\n\n' + "24000",
+          "default_action": {
+          "type": "web_url",
+          "url": "https://seek.com.au",
+          "messenger_extensions": "false",
+          "webview_height_ratio": "tall"
+          }
+          },
+          {
+          "title": "WHATEVER2" + '|' + "SYDNEY",
+          "subtitle": 'Wipro' + '\n\n' + "24000",
+          "default_action": {
+          "type": "web_url",
+          "url": "https://seek.com.au",
+          "messenger_extensions": "false",
+          "webview_height_ratio": "tall"
+          }
+          },
+          {
+          "title": "WHATEVER3" + '|' + "SYDNEY",
+          "subtitle": 'Wipro' + '\n\n' + "24000",
+          "default_action": {
+          "type": "web_url",
+          "url": "https://seek.com.au",
+          "messenger_extensions": "false",
+          "webview_height_ratio": "tall"
+          }
+          }
+        ]
         payload = {
           "facebook": {
             "attachment": {
               "type": "template",
               "payload": {
-                
+                "template_type":"generic",
+                "elements": elements
               }
             }
           }
         }
-                   
+
+
+
         
         result["payload"] = payload
 

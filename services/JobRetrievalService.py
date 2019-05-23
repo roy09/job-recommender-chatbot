@@ -1,6 +1,6 @@
 import pandas as pd
 
-df_data = pd.read_csv('data/seek_australia.csv')
+data = pd.read_csv('data/cleaned.csv', delimiter = '\t', encoding = 'utf-8', usecols=['Title'], error_bad_lines=False, nrows = 10000)
 
-def retreiveJobs(job_title='Business Analyst', job_type='Full Time', city='Sydney'):
-    searchResultDf = df[(df['city']=='Sydney') & (df['job_title']=="Business Analyst") & (df['job_type']=="Full Time")]
+def retreiveJobs(job_title='Data Analyst'):
+    return data[data['Title']==job_title]
