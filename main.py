@@ -1,8 +1,8 @@
-import re
+import re, random
 
 from flask import Flask, make_response, request, jsonify
 
-# from services import JobRecommendationService
+from services import JobRecommendationService
 from services import JobRetrievalService
 
 app = Flask(__name__)
@@ -28,9 +28,8 @@ def results():
 
         keywords = params.get('userSkill') + ',' + params.get('userDegree')
         
-
-        # top5JobTitle = JobRecommendationService.give_suggestions(keywords)
-        top5JobTitle = ['CS Dev', 'Whatever Dev']
+        top5JobTitle = JobRecommendationService.give_suggestions(keywords)
+        # top5JobTitle = ['CS Dev', 'Whatever Dev']
 
         buttons = []
         for job in top5JobTitle:
@@ -43,16 +42,16 @@ def results():
         result = {} # an empty dictionary
 
         payload = {
-        "facebook": {
-        "attachment": {
-        "type": "template",
-        "payload": {
-        "template_type": "button",
-        "text": "Here are possible job title suitable you, choose one.",
-        "buttons": buttons
-        }
-        }
-        }
+            "facebook": {
+                "attachment": {
+                    "type": "template",
+                    "payload": {
+                        "template_type": "button",
+                        "text": "Here are possible job title suitable you, choose one.",
+                        "buttons": buttons
+                    }
+                }
+            }
         }
 
         
@@ -70,78 +69,76 @@ def results():
         params = req.get('queryResult').get('parameters')
         result = {}
         print("PARAMS", params)
-        jobs = JobRetrievalService.retreiveJobs()
-        # elements = []
-        # for job in jobs:
-        #   element = {
-        #   "title": "WHATEVER" + '|' + "SYDNEY",
-        #   "subtitle": 'Wipro' + '\n\n' + "24000",
-        #   "default_action": {
-        #   "type": "web_url",
-        #   "url": "https://seek.com.au",
-        #   "messenger_extensions": "false",
-        #   "webview_height_ratio": "tall"
-        #   }
-        #   }
-        #   elements.append(element)
+        jobQuery = params.get('job')
+        jobs = JobRetrievalService.retreiveJobs(jobQuery)
+        # jobs = ['XA','XA','XA','XA','XA','XA','XA','XA', 'XB', 'XA']
+        print(jobs)
+        elements = []
+        for job in jobs:
+            print("--> " + str(job))
+            element = {
+                "title": job + '|' + generateLocation(),
+                "subtitle": generateCompanyName() + '\n\n' + generateSalary(),
+                "default_action": {
+                    "type": "web_url",
+                    "url": "https://seek.com.au",
+                    "messenger_extensions": "false",
+                    "webview_height_ratio": "tall"
+                }
+            }
+            elements.append(element)
+        
+        if not elements:
+            payload = {
+                "facebook": {
+                    "attachment":{
+                        "type":"template",
+                        "payload":{
+                            "template_type":"button",
+                            "text":"Sorry we could not find a job in our database.",
+                            "buttons":[
+                                {
+                                    "type":"web_url",
+                                    "url":"https://www.seek.com.au/" + jobQuery + "-jobs",
+                                    "title":"Search in Seek"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
 
-        # print(len(elements))
-        elements = [
-            {
-          "title": "WHATEVER" + '|' + "SYDNEY",
-          "subtitle": 'Wipro' + '\n\n' + "24000",
-          "default_action": {
-          "type": "web_url",
-          "url": "https://seek.com.au",
-          "messenger_extensions": "false",
-          "webview_height_ratio": "tall"
-          }
-          },
-          {
-          "title": "WHATEVER2" + '|' + "SYDNEY",
-          "subtitle": 'Wipro' + '\n\n' + "24000",
-          "default_action": {
-          "type": "web_url",
-          "url": "https://seek.com.au",
-          "messenger_extensions": "false",
-          "webview_height_ratio": "tall"
-          }
-          },
-          {
-          "title": "WHATEVER3" + '|' + "SYDNEY",
-          "subtitle": 'Wipro' + '\n\n' + "24000",
-          "default_action": {
-          "type": "web_url",
-          "url": "https://seek.com.au",
-          "messenger_extensions": "false",
-          "webview_height_ratio": "tall"
-          }
-          }
-        ]
-        payload = {
-          "facebook": {
-            "attachment": {
-              "type": "template",
-              "payload": {
-                "template_type":"generic",
-                "elements": elements
+        else:
+            payload = {
+              "facebook": {
+                "attachment": {
+                  "type": "template",
+                  "payload": {
+                    "template_type":"generic",
+                    "elements": elements
+                  }
+                }
               }
             }
-          }
-        }
 
-
-
-        
         result["payload"] = payload
 
         # jsonify the result dictionary
         # this will make the response mime type to application/json
-        print(result)
         result = jsonify(result)
-        print(result)
         # return the result json
         return make_response(result)
+
+def generateCompanyName():
+    companyChocies = ['Wipro', 'USYD', 'CommonWealth Bank', 'Bad Life Choices', 'Berger Paints', 'Healthy Life', 'Green Cookery', 'Uber', 'Ola', 'Masonary Choices', 'Fox News', 'Channel 9', 'News 9', 'Huawei AU', 'Spotify AU', 'UNSW', 'Tech Allstars']
+    return companyChocies[random.randint(0, len(companyChocies) - 1)]
+
+def generateLocation():
+    locationChoices = ['Sydney', 'Canberra', 'New Castle', 'Perth']
+    return locationChoices[random.randint(0, len(locationChoices) - 1)]
+
+def generateSalary():
+    return "AUD" + str(random.randint(50000, 105000))
 
 # default route for the webhook
 # it accepts both the GET and POST methods
