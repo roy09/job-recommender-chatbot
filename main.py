@@ -129,16 +129,20 @@ def results():
         # return the result json
         return make_response(result)
 
+
 def generateCompanyName():
     companyChocies = ['Wipro', 'USYD', 'CommonWealth Bank', 'Bad Life Choices', 'Berger Paints', 'Healthy Life', 'Green Cookery', 'Uber', 'Ola', 'Masonary Choices', 'Fox News', 'Channel 9', 'News 9', 'Huawei AU', 'Spotify AU', 'UNSW', 'Tech Allstars']
     return companyChocies[random.randint(0, len(companyChocies) - 1)]
+
 
 def generateLocation():
     locationChoices = ['Sydney', 'Canberra', 'New Castle', 'Perth']
     return locationChoices[random.randint(0, len(locationChoices) - 1)]
 
+
 def generateSalary():
     return "AUD" + str(random.randint(50000, 105000))
+
 
 # default route for the webhook
 # it accepts both the GET and POST methods
