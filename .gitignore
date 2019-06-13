@@ -1,0 +1,3 @@
+.idea/*
+services/__pycache__/
+*.pyc
